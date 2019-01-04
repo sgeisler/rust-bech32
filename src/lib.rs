@@ -103,6 +103,12 @@ pub trait CheckBase32<T: AsRef<[u5]>> {
     fn check_base32(self) -> Result<T, Self::Err>;
 }
 
+/// Writes base32 data to an underlying buffer.
+pub trait WriteBase32 {
+    /// Writes a slice of base32 data to an underlying buffer
+    fn write_all(&mut self, data: &[u5]);
+}
+
 /// Grouping structure for the human-readable part and the data part
 /// of decoded Bech32 string.
 #[derive(PartialEq, Eq, Debug, Clone, PartialOrd, Ord, Hash)]
@@ -167,6 +173,12 @@ impl<T: AsRef<[u8]>> ToBase32<Vec<u5>> for T {
         ).check_base32().expect(
             "after conversion all elements are in range"
         )
+    }
+}
+
+impl WriteBase32 for Vec<u5> {
+    fn write_all(&mut self, data: &[u5]) {
+        self.extend_from_slice(data);
     }
 }
 
